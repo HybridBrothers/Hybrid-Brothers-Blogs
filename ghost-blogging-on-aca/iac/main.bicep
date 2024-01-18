@@ -30,7 +30,7 @@ resource containerAppRG 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 
 // Keyvault
 resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
-  name: 'e8bu9d4g29gxqzqm45g4'
+  name: 'xxxxxxxxxxx'
   scope: resourceGroup('rg-secrets-prod-westeurope-001')
 }
 
