@@ -61,7 +61,7 @@ resource mySQLDatabase 'Microsoft.DBforMySQL/flexibleServers/databases@2023-06-3
   parent: mySQLServer
 }
 
-// MySQL disable TLS
+// MySQL disable SSL
 resource mySQLSSLConfig 'Microsoft.DBforMySQL/flexibleServers/configurations@2023-06-30' = {
   name: 'require_secure_transport'
   parent: mySQLServer
