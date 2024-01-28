@@ -5,8 +5,9 @@ param location string
 param environment string
 param application string
 param storageAccountName string
-param virtualNetworkId string = ''
-param subnetId string = ''
+param websiteContentShareName string
+param virtualNetworkId string?
+param subnetId string?
 
 //--------------------
 // Targetscope
@@ -17,13 +18,14 @@ targetScope = 'resourceGroup'
 // Variables
 //--------------------
 var backupURL = 'privatelink.we.backup.windowsazure.com'
+var privateEndpoint = (empty(virtualNetworkId) || empty(subnetId)) ? false : true
 
 //--------------------
 // Backup infra
 //--------------------
 
 // Recovery services vault for storage acount backup
-resource recoveryServiceVault 'Microsoft.RecoveryServices/vaults@2023-04-01' = {
+resource recoveryServiceVault 'Microsoft.RecoveryServices/vaults@2023-06-01' = {
   name: 'rsv-${application}-${environment}-${location}-001'
   location: location
   sku: {
@@ -44,7 +46,7 @@ resource recoveryServiceVault 'Microsoft.RecoveryServices/vaults@2023-04-01' = {
 }
 
 // Recovery services vault private endpoint
-resource privateRecoveryServiceVaultEndpoint 'Microsoft.Network/privateEndpoints@2022-09-01' =  {
+resource privateRecoveryServiceVaultEndpoint 'Microsoft.Network/privateEndpoints@2023-06-01' = if (privateEndpoint)  {
   name: 'pep-${application}backup-${environment}-${location}-001'
   location: location
   properties:{
@@ -70,13 +72,13 @@ resource privateRecoveryServiceVaultEndpoint 'Microsoft.Network/privateEndpoints
 }
 
 // Recovery services vault private dns zone
-resource privateRecoveryServiceVaultDNSZone 'Microsoft.Network/privateDnsZones@2020-06-01' =  {
+resource privateRecoveryServiceVaultDNSZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (privateEndpoint) {
   name: backupURL
   location: 'global'
 }
 
 // Recovery services vault private dns zone virtual network link
-resource privateRecoveryServiceVaultDNSZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' =  {
+resource privateRecoveryServiceVaultDNSZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = if (privateEndpoint) {
   name: 'vnl-backup-${application}-${environment}-${location}-001'
   location: 'global'
   parent: privateRecoveryServiceVaultDNSZone
@@ -89,7 +91,7 @@ resource privateRecoveryServiceVaultDNSZoneLink 'Microsoft.Network/privateDnsZon
 }
 
 // Recovery services vault private dns zone group
-resource privateRecoveryServiceVaultDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-11-01' =  {
+resource privateRecoveryServiceVaultDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-06-01' = if (privateEndpoint) {
   name: 'default'
   parent: privateRecoveryServiceVaultEndpoint
   properties:{
@@ -105,17 +107,18 @@ resource privateRecoveryServiceVaultDNSZoneGroup 'Microsoft.Network/privateEndpo
 }
 
 // Reference existing storageaccount
-resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
   name: storageAccountName
 }
 
 // Reference existing fileshare
-resource websiteContentShare 'Microsoft.Storage/storageAccounts/fileServices@2022-09-01' existing = {
-  name: storageAccountName
+resource websiteContentShare 'Microsoft.Storage/storageAccounts/fileServices@2023-01-01' existing = {
+  parent: storageAccount
+  name: websiteContentShareName
 }
 
 // Recovery services vault backup policy
-resource storageAccountBackupPolicy 'Microsoft.RecoveryServices/vaults/backupPolicies@2023-02-01' = {
+resource storageAccountBackupPolicy 'Microsoft.RecoveryServices/vaults/backupPolicies@2023-06-01' = {
   name: 'bkpol-${application}backup-${environment}-${location}-001'
   parent: recoveryServiceVault
   properties:{
@@ -147,7 +150,8 @@ resource storageAccountBackupPolicy 'Microsoft.RecoveryServices/vaults/backupPol
 
 
 // Recovery services vault protectionContainer
-resource storageAccountProtectionContainer 'Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers@2023-02-01' = {
+resource storageAccountProtectionContainer 'Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers@2023-06-01' = {
+  #disable-next-line use-parent-property
   name: '${recoveryServiceVault.name}/Azure/storagecontainer;Storage;${resourceGroup().name};${storageAccount.name}'
   properties: {
     backupManagementType: 'AzureStorage'
@@ -157,7 +161,7 @@ resource storageAccountProtectionContainer 'Microsoft.RecoveryServices/vaults/ba
 }
 
 // Recovery services vault protectedItem
-resource storageAccountProtectedItem 'Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems@2023-02-01' = {
+resource storageAccountProtectedItem 'Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems@2023-06-01' = {
   name: 'AzureFileShare;${websiteContentShare.name}'
   parent: storageAccountProtectionContainer
   properties: {

@@ -18,7 +18,7 @@ targetScope = 'resourceGroup'
 //--------------------
 // Virtual Network
 //--------------------
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2022-11-01' = {
+resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-06-01' = {
   name: 'vnet-${application}-${environment}-${location}-001'
   location: location
   properties:{

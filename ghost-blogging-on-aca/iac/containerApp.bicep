@@ -15,7 +15,7 @@ param logAnalyticsWorkspaceName string
 param storageAccountKey string
 param storageAccountName string
 param websiteContentShareName string
-param subnetId string = ''
+param subnetId string?
 param containerAppName string
 
 //--------------------
@@ -159,12 +159,12 @@ var containerVars = [
 //--------------------
 
 // Container Apps Environment
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-04-01-preview' = {
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
   name: 'cae-${application}-${environment}-${location}-001'
   location: location
   properties: {
     infrastructureResourceGroup: 'rg-aca-${environment}-${location}-001'
-    vnetConfiguration:{
+    vnetConfiguration: empty(subnetId) ? null : {
       internal: false
       infrastructureSubnetId: subnetId
     }
@@ -179,7 +179,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-04-01-
 }
 
 // Container App Env Storagemount for content
-resource containerAppsEnvStorageMountContent 'Microsoft.App/managedEnvironments/storages@2023-04-01-preview' = {
+resource containerAppsEnvStorageMountContent 'Microsoft.App/managedEnvironments/storages@2023-05-01' = {
   name: 'contentmount'
   parent: containerAppsEnvironment
   properties: {
@@ -202,7 +202,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10
 }
 
 // Container App
-resource containerApp 'Microsoft.App/containerApps@2023-04-01-preview' = {
+resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
   name: containerAppName
   location: location
   identity: {

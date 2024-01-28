@@ -23,12 +23,12 @@ targetScope = 'resourceGroup'
 //--------------------
 
 // Container Apps Environment
-resource  containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-04-01-preview' existing = {
+resource  containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
   name: 'cae-${application}-${environment}-${location}-001'
 }
 
 // Container App Env Certificate
-resource containerAppsEnvCertificate 'Microsoft.App/managedEnvironments/managedCertificates@2023-04-01-preview' = {
+resource containerAppsEnvCertificate 'Microsoft.App/managedEnvironments/managedCertificates@2023-05-01' = {
   name: acaConfig.url
   parent: containerAppsEnvironment
   location: location
@@ -43,7 +43,7 @@ resource containerAppsEnvCertificate 'Microsoft.App/managedEnvironments/managedC
 //--------------------
 
 // Container App
-resource containerApp 'Microsoft.App/containerApps@2023-04-01-preview' = {
+resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
   name: 'ca-${application}-${environment}-${location}-001'
   location: location
   identity: {

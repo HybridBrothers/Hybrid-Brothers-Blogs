@@ -8,8 +8,8 @@ param dbConfig object
 @secure()
 param dbPassword string
 param containerAppName string
-param virtualNetworkId string = ''
-param subnetId string = ''
+param virtualNetworkId string?
+param subnetId string?
 
 //--------------------
 // Targetscope
@@ -20,13 +20,14 @@ targetScope = 'resourceGroup'
 // Variables
 //--------------------
 var mysqlURL = 'privatelink.mysql.database.azure.com'
+var privateEndpoint = (empty(virtualNetworkId) || empty(subnetId)) ? false : true
 
 //--------------------
 // Database infra
 //--------------------
 
 // MySQL flexible server 
-resource mySQLServer 'Microsoft.DBforMySQL/flexibleServers@2022-09-30-preview' = {
+resource mySQLServer 'Microsoft.DBforMySQL/flexibleServers@2023-06-30' = {
   name: dbConfig.serverName
   tags:{
     'hidden-title': 'mysql-${application}-${environment}-${location}-001'
@@ -48,20 +49,20 @@ resource mySQLServer 'Microsoft.DBforMySQL/flexibleServers@2022-09-30-preview' =
       backupRetentionDays: 7
     }
     network:{
-      publicNetworkAccess: 'Enabled'
+      publicNetworkAccess: (privateEndpoint) ? 'Disabled' : 'Enabled'
     }
-    version: '5.7'
+    version: '8.0.21'
   }
 }
 
 // MySQL Database
-resource mySQLDatabase 'Microsoft.DBforMySQL/flexibleServers/databases@2022-01-01' =  {
+resource mySQLDatabase 'Microsoft.DBforMySQL/flexibleServers/databases@2023-06-30' =  {
   name: dbConfig.dbname
   parent: mySQLServer
 }
 
 // MySQL disable TLS
-resource mySQLSSLConfig 'Microsoft.DBforMySQL/flexibleServers/configurations@2022-01-01' = {
+resource mySQLSSLConfig 'Microsoft.DBforMySQL/flexibleServers/configurations@2023-06-30' = {
   name: 'require_secure_transport'
   parent: mySQLServer
   properties:{
@@ -71,12 +72,12 @@ resource mySQLSSLConfig 'Microsoft.DBforMySQL/flexibleServers/configurations@202
 }
 
 // Reference existing containerapp
-resource containerApp 'Microsoft.App/containerApps@2023-04-01-preview' existing = {
+resource containerApp 'Microsoft.App/containerApps@2023-05-01' existing = {
   name: containerAppName
 }
 
 // MySQL add firewall rule
-resource mySQLFirewallRule 'Microsoft.DBforMySQL/flexibleServers/firewallRules@2022-01-01' = {
+resource mySQLFirewallRule 'Microsoft.DBforMySQL/flexibleServers/firewallRules@2023-06-30' = {
   name: 'allow-aca-outbound-ip'
   parent: mySQLServer
   properties:{
@@ -85,12 +86,12 @@ resource mySQLFirewallRule 'Microsoft.DBforMySQL/flexibleServers/firewallRules@2
   }
 }
 
-// // MySQL private endpoint
-resource privateMySQLEndpoint 'Microsoft.Network/privateEndpoints@2022-09-01' = {
+// MySQL private endpoint
+resource privateMySQLEndpoint 'Microsoft.Network/privateEndpoints@2023-06-01' = if (privateEndpoint) {
   name: 'pep-${application}mysql-${environment}-${location}-001'
   location: location
   properties:{
-    subnet: {
+    subnet: empty(subnetId) ? null: {
       id: subnetId
     }
     customNetworkInterfaceName: 'nic-${application}mysql-${environment}-${location}-001'
@@ -112,26 +113,26 @@ resource privateMySQLEndpoint 'Microsoft.Network/privateEndpoints@2022-09-01' = 
 }
 
 // MySQL private dns zone
-resource privateMySQLDNSZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+resource privateMySQLDNSZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (privateEndpoint) {
   name: mysqlURL
   location: 'global'
 }
 
 // MySQL private dns zone virtual network link
-resource privateMySQLDNSZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+resource privateMySQLDNSZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = if (privateEndpoint) {
   name: 'vnl-mysql-${application}-${environment}-${location}-001'
   location: 'global'
   parent: privateMySQLDNSZone
   properties:{
     registrationEnabled: false
-    virtualNetwork:{
+    virtualNetwork: empty(virtualNetworkId) ? null : {
       id: virtualNetworkId
     }
   }
 }
 
 // MySQL private dns zone group
-resource privateMySQLDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-11-01' = {
+resource privateMySQLDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-06-01' = if (privateEndpoint) {
   name: 'default'
   parent: privateMySQLEndpoint
   properties:{

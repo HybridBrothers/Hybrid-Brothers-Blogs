@@ -1,26 +1,17 @@
 using 'main.bicep'
 
 param application = 'blog'
-param environment = 'test'
-param vnetConfig = {
-  name: 'blog'
-  addressPrefixes: [
-    '10.0.0.0/16'
-  ]
-  subnets: [
-    {
-      name: 'containerapps'
-      addressPrefix: '10.0.0.0/22'
-    }
-  ]
-}
+param environment = 'prod'
 param acaConfig = {
-  url: 'blog.xxx.com'
-  storageAccountName: 'abcdefghikjlmnopqrstuvwxyz'
-  smtpUserName: 'postmaster@xxx.com'
+  url: 'domain.com'
+  storageAccountName: ''
+  smtpUserName: 'postmaster@domain.com'
 }
 param dbConfig = {
-  serverName: 'abcdefghikjlmnopqrstuvwxyz'
-  username: 'blogadministrator'
-  dbname: 'blogdatabase'
+  serverName: 'servername'
+  username: 'username'
+  dbname: 'dbname'
 }
+param keyVaultName = 'keyVault'
+param keyVaultResourceGroup = 'keyVaultRG'
+param privateEndpoint = false

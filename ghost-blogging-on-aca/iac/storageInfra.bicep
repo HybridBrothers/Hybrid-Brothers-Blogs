@@ -5,8 +5,8 @@ param location string
 param environment string
 param application string
 param acaConfig object
-param virtualNetworkId string = ''
-param subnetId string = ''
+param virtualNetworkId string?
+param subnetId string?
 
 //--------------------
 // Targetscope
@@ -17,13 +17,14 @@ targetScope = 'resourceGroup'
 // Variables
 //--------------------
 var storageAccountFileURL = 'privatelink.file.${az.environment().suffixes.storage}'
+var privateEndpoint = (empty(virtualNetworkId) || empty(subnetId)) ? false : true
 
 //--------------------
 // Storage infra
 //--------------------
 
 // Storage account
-resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: acaConfig.storageAccountName
   tags: {
     'hidden-title': 'st-${application}-${environment}-${location}-001'
@@ -35,7 +36,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   kind: 'StorageV2'
   properties: {
     accessTier: 'Hot'
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess: (privateEndpoint) ? 'Disabled' : 'Enabled'
     minimumTlsVersion: 'TLS1_2'
     networkAcls: {
       bypass: 'AzureServices'
@@ -45,11 +46,11 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 }
 
 // Storage account private endpoint
-resource privateStorageAccountEndpoint 'Microsoft.Network/privateEndpoints@2022-11-01' = {
+resource privateStorageAccountEndpoint 'Microsoft.Network/privateEndpoints@2023-06-01' = if (privateEndpoint) {
   name: 'pep-${application}storage-${environment}-${location}-001'
   location: location
   properties:{
-    subnet: {
+    subnet: empty(subnetId) ? null : {
       id: subnetId
     }
     customNetworkInterfaceName: 'nic-${application}storage-${environment}-${location}-001'
@@ -71,26 +72,26 @@ resource privateStorageAccountEndpoint 'Microsoft.Network/privateEndpoints@2022-
 }
 
 // Storage account file private dns zone
-resource privateStorageAccountFileDNSZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+resource privateStorageAccountFileDNSZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (privateEndpoint) {
   name: storageAccountFileURL
   location: 'global'
 }
 
 // Storage account file private dns zone virtual network link
-resource privateStorageAccountFileDNSZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+resource privateStorageAccountFileDNSZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = if (privateEndpoint) {
   name: 'vnl-storageaccountfile-${application}-${environment}-${location}-001'
   location: 'global'
   parent: privateStorageAccountFileDNSZone
   properties:{
     registrationEnabled: false
-    virtualNetwork:{
+    virtualNetwork: empty(virtualNetworkId) ? null : {
       id: virtualNetworkId
     }
   }
 }
 
 // Storage account private dns zone group
-resource privateStorageAccountDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-11-01' = {
+resource privateStorageAccountDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-06-01' = if (privateEndpoint) {
   name: 'default'
   parent: privateStorageAccountEndpoint
   properties:{
@@ -106,7 +107,7 @@ resource privateStorageAccountDNSZoneGroup 'Microsoft.Network/privateEndpoints/p
 }
 
 // File service
-resource fileService 'Microsoft.Storage/storageAccounts/fileServices@2022-09-01' = {
+resource fileService 'Microsoft.Storage/storageAccounts/fileServices@2023-01-01' = {
   name: 'default'
   parent: storageAccount
   properties: {
@@ -117,7 +118,7 @@ resource fileService 'Microsoft.Storage/storageAccounts/fileServices@2022-09-01'
   }
 }
 // File share
-resource websiteContentShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2022-09-01' = {
+resource websiteContentShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-01-01' = {
   name: 'websitecontent'
   parent: fileService
   properties: {

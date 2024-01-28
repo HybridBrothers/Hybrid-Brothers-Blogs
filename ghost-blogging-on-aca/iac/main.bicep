@@ -3,9 +3,12 @@
 //--------------------
 param location string = deployment().location
 param application string
-param vnetConfig object
+param vnetConfig object = {}
 param acaConfig object
 param dbConfig object
+param privateEndpoint bool
+param keyVaultName string
+param keyVaultResourceGroup string
 
 @allowed(['prod', 'test'])
 param environment string
@@ -23,19 +26,19 @@ var containerAppName = 'ca-${application}-${environment}-${location}-001'
 //--------------------
 // Basic infra
 //--------------------
-resource containerAppRG 'Microsoft.Resources/resourceGroups@2022-09-01' = {
+resource containerAppRG 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   name: 'rg-${application}-${environment}-${location}-001'
   location: location
 }
 
 // Keyvault
-resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
-  name: 'xxxxxxxxxxx'
-  scope: resourceGroup('rg-secrets-prod-westeurope-001')
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  name: keyVaultName
+  scope: resourceGroup(keyVaultResourceGroup)
 }
 
 // Network Infra
-module networkInfra 'networkInfra.bicep' = {
+module networkInfra 'networkInfra.bicep' = if (privateEndpoint) {
   name: 'deploy_network'
   scope: containerAppRG
   params: {
@@ -70,6 +73,9 @@ module databaseInfra 'databaseInfra.bicep' = {
     dbConfig: dbConfig
     dbPassword: keyVault.getSecret('MySQLPassword')
   }
+  dependsOn:[
+    containerApp
+  ]
 }
 
 // LogAnalytics Infra
@@ -92,7 +98,11 @@ module backupInfra 'backupInfra.bicep' = {
     application: application
     environment: environment 
     storageAccountName: storageInfra.outputs.storageAccountName
+    websiteContentShareName: storageInfra.outputs.websiteContentShareName
   }
+  dependsOn:[
+    containerApp
+  ]
 }
 
 // ContainerApp
