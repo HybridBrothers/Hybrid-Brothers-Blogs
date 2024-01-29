@@ -147,8 +147,6 @@ resource storageAccountBackupPolicy 'Microsoft.RecoveryServices/vaults/backupPol
   }
 }
 
-
-
 // Recovery services vault protectionContainer
 resource storageAccountProtectionContainer 'Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers@2023-06-01' = {
   #disable-next-line use-parent-property

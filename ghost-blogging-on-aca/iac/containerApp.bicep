@@ -192,6 +192,18 @@ resource containerAppsEnvStorageMountContent 'Microsoft.App/managedEnvironments/
   }
 }
 
+
+// Container App Env Certificate
+resource containerAppsEnvCertificate 'Microsoft.App/managedEnvironments/managedCertificates@2023-05-01' = {
+  name: acaConfig.url
+  parent: containerAppsEnvironment
+  location: location
+  properties: {
+    domainControlValidation: 'HTTP'
+    subjectName: acaConfig.url
+  }
+}
+
 //--------------------
 // Container app
 //--------------------
@@ -217,10 +229,11 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
         external: true
         targetPort: 2368
         transport: 'auto'
-        customDomains: [
+        customDomains:  [
           {
+            certificateId: containerAppsEnvCertificate.id
             name: acaConfig.url
-            bindingType: 'Disabled'
+            bindingType: 'SniEnabled'
           }
         ]
         allowInsecure: false
@@ -236,21 +249,3 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
     }
   }
 }
-
-// Container App update for managed certificate
-module containerAppUpdate 'containerAppUpdate.bicep' = {
-  name: 'update_containerapp'
-  params: {
-    location: location
-    application: application
-    environment: environment
-    acaConfig: acaConfig
-    containers: containers
-    containerSecrets: containerSecrets
-    containerVolumes: containerVolumes
-  }
-  dependsOn:[
-    containerApp
-  ]
-}
-

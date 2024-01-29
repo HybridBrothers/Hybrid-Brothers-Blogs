@@ -40,6 +40,9 @@ resource mySQLServer 'Microsoft.DBforMySQL/flexibleServers@2023-06-30' = {
   properties:{
     administratorLogin: dbConfig.username
     administratorLoginPassword: dbPassword
+    highAvailability: {
+      mode: 'Disabled'
+    }
     storage: {
       storageSizeGB: 20
       iops: 360
@@ -47,6 +50,7 @@ resource mySQLServer 'Microsoft.DBforMySQL/flexibleServers@2023-06-30' = {
     }
     backup: {
       backupRetentionDays: 7
+      geoRedundantBackup: 'Disabled'
     }
     network:{
       publicNetworkAccess: (privateEndpoint) ? 'Disabled' : 'Enabled'
@@ -61,7 +65,7 @@ resource mySQLDatabase 'Microsoft.DBforMySQL/flexibleServers/databases@2023-06-3
   parent: mySQLServer
 }
 
-// MySQL disable SSL
+// MySQL disable TLS
 resource mySQLSSLConfig 'Microsoft.DBforMySQL/flexibleServers/configurations@2023-06-30' = {
   name: 'require_secure_transport'
   parent: mySQLServer
