@@ -2,8 +2,8 @@
 <SiPolicy xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PolicyType="Base Policy" xmlns="urn:schemas-microsoft-com:sipolicy">
   <VersionEx>10.0.0.0</VersionEx>
   <PlatformID>{2E07F7E4-194C-4D20-B7C9-6F44A6C5A234}</PlatformID>
-  <PolicyID>{259A82E5-E472-47DD-861D-541327CFBEE3}</PolicyID>
-  <BasePolicyID>{259A82E5-E472-47DD-861D-541327CFBEE3}</BasePolicyID>
+  <PolicyID>{F6091BA4-3832-4566-AFB7-FCF3343695B4}</PolicyID>
+  <BasePolicyID>{F6091BA4-3832-4566-AFB7-FCF3343695B4}</BasePolicyID>
   <Rules>
     <Rule>
       <Option>Enabled:Unsigned System Integrity Policy</Option>
@@ -24,28 +24,35 @@
       <Option>Enabled:Update Policy No Reboot</Option>
     </Rule>
     <Rule>
-      <Option>Enabled:Dynamic Code Security</Option>
-    </Rule>
-    <Rule>
-      <Option>Enabled:Revoked Expired As Unsigned</Option>
-    </Rule>
-    <Rule>
       <Option>Enabled:Allow Supplemental Policies</Option>
+    </Rule>
+    <Rule>
+      <Option>Enabled:Managed Installer</Option>
+    </Rule>
+    <Rule>
+      <Option>Enabled:Boot Audit On Failure</Option>
     </Rule>
   </Rules>
   <EKUs />
   <FileRules>
-    <Deny ID="ID_DENY_PATH_2_0_0" FriendlyName="Deny by path: %SYSTEM32%\MicrosoftAccountTokenProvider.dll" FilePath="%SYSTEM32%\MicrosoftAccountTokenProvider.dll" />
+    <Allow ID="ID_ALLOW_A_1_0" FriendlyName="Allow Kernel Drivers" FileName="*" />
+    <Allow ID="ID_ALLOW_A_2_0" FriendlyName="Allow User mode components" FileName="*" />
+    <Deny ID="ID_DENY_PATH_1" FriendlyName="Deny by path: %SYSTEM32%\MicrosoftAccountTokenProvider.dll" FilePath="%SYSTEM32%\MicrosoftAccountTokenProvider.dll" />
   </FileRules>
   <Signers />
   <SigningScenarios>
-    <SigningScenario ID="ID_SIGNINGSCENARIO_DRIVERS_1" FriendlyName="Auto generated policy on 03-01-2024" Value="131">
-      <ProductSigners />
-    </SigningScenario>
-    <SigningScenario ID="ID_SIGNINGSCENARIO_WINDOWS" FriendlyName="Auto generated policy on 03-01-2024" Value="12">
+    <SigningScenario ID="ID_SIGNINGSCENARIO_DRIVERS_1" FriendlyName="Auto generated policy on 03-28-2024" Value="131">
       <ProductSigners>
         <FileRulesRef>
-          <FileRuleRef RuleID="ID_DENY_PATH_2_0_0" />
+          <FileRuleRef RuleID="ID_ALLOW_A_1_0" />
+        </FileRulesRef>
+      </ProductSigners>
+    </SigningScenario>
+    <SigningScenario ID="ID_SIGNINGSCENARIO_WINDOWS" FriendlyName="Auto generated policy on 03-28-2024" Value="12">
+      <ProductSigners>
+        <FileRulesRef>
+          <FileRuleRef RuleID="ID_ALLOW_A_2_0" />
+          <FileRuleRef RuleID="ID_DENY_PATH_1" />
         </FileRulesRef>
       </ProductSigners>
     </SigningScenario>
@@ -54,14 +61,19 @@
   <CiSigners />
   <HvciOptions>0</HvciOptions>
   <Settings>
+    <Setting Provider="AllHostIds" Key="{0468C085-CA5B-11D0-AF08-00609797F0E0}" ValueName="EnterpriseDefinedClsId">
+      <Value>
+        <Boolean>true</Boolean>
+      </Value>
+    </Setting>
     <Setting Provider="PolicyInfo" Key="Information" ValueName="Name">
       <Value>
-        <String>AuditPolicy_2024-03-01</String>
+        <String>WDAC MicrosoftAccountTokenProvider Monitoring</String>
       </Value>
     </Setting>
     <Setting Provider="PolicyInfo" Key="Information" ValueName="Id">
       <Value>
-        <String>2024-03-01</String>
+        <String>2024-03-28</String>
       </Value>
     </Setting>
   </Settings>
