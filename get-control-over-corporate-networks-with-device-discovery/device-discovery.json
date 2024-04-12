@@ -1,0 +1,559 @@
+{
+    "version": "Notebook/1.0",
+    "items": [
+      {
+        "type": 1,
+        "content": {
+          "json": "# Device Discovery\n-----\n"
+        },
+        "name": "text - 2"
+      },
+      {
+        "type": 11,
+        "content": {
+          "version": "LinkItem/1.0",
+          "style": "tabs",
+          "links": [
+            {
+              "id": "c1950c2c-12f7-4c71-adbb-40e070b8d86b",
+              "cellValue": "view",
+              "linkTarget": "parameter",
+              "linkLabel": "Overview",
+              "subTarget": "overview",
+              "style": "link"
+            }
+          ]
+        },
+        "name": "links - 9"
+      },
+      {
+        "type": 12,
+        "content": {
+          "version": "NotebookGroup/1.0",
+          "groupType": "editable",
+          "items": [
+            {
+              "type": 1,
+              "content": {
+                "json": "## Unmanaged devices\r\nInformation regarding all the unmanaged devices found via Device Discovery"
+              },
+              "name": "text - 2"
+            },
+            {
+              "type": 9,
+              "content": {
+                "version": "KqlParameterItem/1.0",
+                "parameters": [
+                  {
+                    "id": "65a5d150-0bcb-45df-9fab-629ac143918f",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "time_range",
+                    "label": "First seen",
+                    "type": 4,
+                    "isRequired": true,
+                    "typeSettings": {
+                      "selectableValues": [
+                        {
+                          "durationMs": 3600000
+                        },
+                        {
+                          "durationMs": 14400000
+                        },
+                        {
+                          "durationMs": 43200000
+                        },
+                        {
+                          "durationMs": 86400000
+                        },
+                        {
+                          "durationMs": 172800000
+                        },
+                        {
+                          "durationMs": 259200000
+                        },
+                        {
+                          "durationMs": 604800000
+                        },
+                        {
+                          "durationMs": 1209600000
+                        },
+                        {
+                          "durationMs": 2419200000
+                        }
+                      ],
+                      "allowCustom": false
+                    },
+                    "timeContext": {
+                      "durationMs": 2592000000
+                    },
+                    "value": {
+                      "durationMs": 86400000
+                    }
+                  },
+                  {
+                    "id": "17f6a873-ae48-4901-9334-ebb20b8bf08c",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "include_known_vendors",
+                    "label": "Include known vendors",
+                    "type": 2,
+                    "isRequired": true,
+                    "multiSelect": true,
+                    "quote": "'",
+                    "delimiter": ",",
+                    "query": "DeviceInfo\r\n// Set empty Vendor names to 'Unknown'\r\n| extend Vendor = iff(Vendor == \"\", \"Unknown\",  Vendor)\r\n| distinct Vendor\r\n| sort by Vendor asc",
+                    "typeSettings": {
+                      "additionalResourceOptions": [
+                        "value::all"
+                      ],
+                      "showDefault": false
+                    },
+                    "timeContext": {
+                      "durationMs": 0
+                    },
+                    "timeContextFromParameter": "time_range",
+                    "defaultValue": "value::all",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "value": [
+                      "value::all"
+                    ]
+                  },
+                  {
+                    "id": "a57d292f-c21e-4196-a44d-6407a9c9a0eb",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "flag_unassigned_group",
+                    "label": "Only flag unassigned group",
+                    "type": 2,
+                    "isRequired": true,
+                    "typeSettings": {
+                      "additionalResourceOptions": []
+                    },
+                    "jsonData": "[\"True\", \"False\"]\r\n",
+                    "timeContext": {
+                      "durationMs": 0
+                    },
+                    "timeContextFromParameter": "time_range",
+                    "value": "False"
+                  },
+                  {
+                    "id": "3bf2e7e4-f730-42e2-b8c3-5adc117dc1ff",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "include_join_type",
+                    "label": "Include join type",
+                    "type": 2,
+                    "isRequired": true,
+                    "multiSelect": true,
+                    "quote": "'",
+                    "delimiter": ",",
+                    "query": "DeviceInfo\r\n| where JoinType != \"\"\r\n| distinct JoinType",
+                    "typeSettings": {
+                      "additionalResourceOptions": [
+                        "value::all"
+                      ],
+                      "showDefault": false
+                    },
+                    "timeContext": {
+                      "durationMs": 0
+                    },
+                    "timeContextFromParameter": "time_range",
+                    "defaultValue": "value::all",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces"
+                  },
+                  {
+                    "id": "d6b6c2d9-1626-4c7e-820f-ee1799ff0945",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "exclude_excluded_devices",
+                    "label": "Exclude excluded devices",
+                    "type": 2,
+                    "isRequired": true,
+                    "typeSettings": {
+                      "additionalResourceOptions": []
+                    },
+                    "jsonData": "[\"True\", \"False\"]",
+                    "value": "False"
+                  },
+                  {
+                    "id": "fb9a3384-c75d-46fa-a47a-907483b19184",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "include_device_category",
+                    "label": "Include device category",
+                    "type": 2,
+                    "isRequired": true,
+                    "multiSelect": true,
+                    "quote": "'",
+                    "delimiter": ",",
+                    "query": "DeviceInfo\r\n| distinct DeviceCategory",
+                    "typeSettings": {
+                      "additionalResourceOptions": [
+                        "value::all"
+                      ]
+                    },
+                    "timeContext": {
+                      "durationMs": 0
+                    },
+                    "timeContextFromParameter": "time_range",
+                    "defaultValue": "value::all",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "value": [
+                      "value::all"
+                    ]
+                  },
+                  {
+                    "id": "aa0885e8-4a0f-4027-b347-04d84421c50b",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "include_networks",
+                    "label": "Include Networks",
+                    "type": 2,
+                    "isRequired": true,
+                    "multiSelect": true,
+                    "quote": "'",
+                    "delimiter": ",",
+                    "query": "let historic_devices = DeviceInfo\r\n    | where TimeGenerated between ({time_range:start} .. ago(1d))\r\n    | distinct DeviceId;\r\nDeviceInfo\r\n| where TimeGenerated > ago(1d)\r\n| join kind=leftanti historic_devices on DeviceId\r\n// Get more network info of the device\r\n| join DeviceNetworkInfo on DeviceId, ReportId\r\n// Expand network names\r\n| mv-expand ConnectedNetworks\r\n// Set empty network names to 'Unkown'\r\n| extend ConnectedNetworkName = iff(ConnectedNetworks.Name == \"\", \"Unknown\",  tostring(ConnectedNetworks.Name))\r\n| distinct ConnectedNetworkName",
+                    "typeSettings": {
+                      "additionalResourceOptions": [
+                        "value::all"
+                      ],
+                      "showDefault": false
+                    },
+                    "defaultValue": "value::all",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "value": [
+                      "value::all"
+                    ]
+                  },
+                  {
+                    "id": "e37850ae-1134-48cf-be40-f9b0e4152580",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "network_address",
+                    "label": "Networks (watchlist)",
+                    "type": 2,
+                    "multiSelect": true,
+                    "quote": "'",
+                    "delimiter": ",",
+                    "query": "_GetWatchlist(\"networks\")\r\n| extend Network = strcat(NetworkAddress, \"/\", Prefix)\r\n| distinct Network, Name\r\n| sort by Name asc",
+                    "typeSettings": {
+                      "additionalResourceOptions": [
+                        "value::all"
+                      ],
+                      "showDefault": false
+                    },
+                    "timeContext": {
+                      "durationMs": 0
+                    },
+                    "timeContextFromParameter": "time_range",
+                    "defaultValue": "value::all",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "value": [
+                      "172.17.10.0/24"
+                    ]
+                  },
+                  {
+                    "id": "f9bdce47-08c5-4b21-8653-8acbc4c8b543",
+                    "version": "KqlParameterItem/1.0",
+                    "name": "hidden_tenant_lookup",
+                    "type": 1,
+                    "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"/tenants?api-version=2022-12-01\",\"urlParams\":[],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$..tenantId\",\"columns\":[]}}]}",
+                    "isHiddenWhenLocked": true,
+                    "typeSettings": {
+                      "multiLineText": true,
+                      "editorLanguage": "json"
+                    },
+                    "timeContext": {
+                      "durationMs": 0
+                    },
+                    "timeContextFromParameter": "time_range",
+                    "queryType": 12
+                  }
+                ],
+                "style": "pills",
+                "queryType": 0,
+                "resourceType": "microsoft.operationalinsights/workspaces"
+              },
+              "name": "parameters - 5"
+            },
+            {
+              "type": 3,
+              "content": {
+                "version": "KqlItem/1.0",
+                "query": "DeviceInfo\r\n| where TimeGenerated > {time_range:start}\r\n// Get more network info of the device\r\n| join DeviceNetworkInfo on DeviceId, ReportId\r\n// Remove unneeded data\r\n| project-away DeviceId1, Timestamp1, ReportId1, DeviceName1\r\n// Remove expected managed devices connecting after a long period\r\n| where JoinType in ({include_join_type}) or JoinType == \"\"\r\n// Exlude known vendor devices on the network\r\n| extend Vendor = iff(Vendor == \"\", \"Unknown\", Vendor)\r\n| where Vendor in ({include_known_vendors})\r\n// Remove excluded devices\r\n| where IsExcluded != 1 or {exclude_excluded_devices} == False\r\n// Only flag unassigned group devices\r\n| where MachineGroup == \"UnassignedGroup\" or {flag_unassigned_group} == false\r\n// Exlude certain device categories\r\n| where DeviceCategory in ({include_device_category})\r\n// Expand IP Addresses and networks\r\n| mv-expand IPAddresses\r\n| extend IPAddress = IPAddresses.IPAddress, SubnetPrefix = IPAddresses.SubnetPrefix, AddressType = IPAddresses.AddressType\r\n| mv-expand ConnectedNetworks\r\n// Set empty network names to 'Unkown'\r\n| extend ConnectedNetworkName = iff(ConnectedNetworks.Name == \"\", \"Unknown\",  tostring(ConnectedNetworks.Name))\r\n// Only include filtered networks\r\n| where ConnectedNetworkName in ({include_networks})\r\n// Only include IP addresses found in network ranges from wathlist, or skip check when parameter is not set\r\n| where ipv4_is_in_any_range(tostring(IPAddress), dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n| distinct DeviceId, OnboardingStatus\r\n| summarize count() by OnboardingStatus",
+                "size": 0,
+                "title": "Onboarding State",
+                "queryType": 0,
+                "resourceType": "microsoft.operationalinsights/workspaces",
+                "visualization": "piechart",
+                "chartSettings": {
+                  "seriesLabelSettings": [
+                    {
+                      "seriesName": "Onboarded",
+                      "color": "green"
+                    },
+                    {
+                      "seriesName": "Unsupported",
+                      "color": "orange"
+                    },
+                    {
+                      "seriesName": "Can be onboarded",
+                      "color": "red"
+                    },
+                    {
+                      "seriesName": "Insufficient info",
+                      "color": "gray"
+                    }
+                  ],
+                  "ySettings": {
+                    "numberFormatSettings": {
+                      "unit": 0,
+                      "options": {
+                        "style": "decimal",
+                        "useGrouping": true
+                      }
+                    }
+                  }
+                }
+              },
+              "customWidth": "50",
+              "name": "onboarding_state",
+              "styleSettings": {
+                "maxWidth": "50"
+              }
+            },
+            {
+              "type": 3,
+              "content": {
+                "version": "KqlItem/1.0",
+                "query": "// Get all networks from watchlist\r\nlet networks = _GetWatchlist(\"networks\")\r\n    | extend NetworkPrefix = strcat(NetworkAddress, \"/\", Prefix)\r\n    | where NetworkPrefix in (dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n    | extend joiner = 1;\r\nlet historic_devices = DeviceInfo\r\n    | where TimeGenerated between (ago(30d) .. {time_range:start})\r\n    | where OnboardingStatus == \"Onboarded\"\r\n    | distinct DeviceId;\r\nDeviceInfo\r\n    | where TimeGenerated > {time_range:start}\r\n    | join kind=leftanti historic_devices on DeviceId\r\n    // Get more network info of the device\r\n    | join DeviceNetworkInfo on DeviceId, ReportId\r\n    // Remove unneeded data\r\n    | project-away DeviceId1, Timestamp1, ReportId1, DeviceName1\r\n    // Rmeove expected managed devices connecting after a long period\r\n    | where JoinType in ({include_join_type}) or JoinType == \"\"\r\n    | where OnboardingStatus != \"Onboarded\"\r\n    // Exlude known vendor devices on the network\r\n    | extend Vendor = iff(Vendor == \"\", \"Unknown\", Vendor)\r\n    | where Vendor in ({include_known_vendors})\r\n    // Remove excluded devices\r\n    | where IsExcluded != 1 or {exclude_excluded_devices} == False\r\n    // Only flag unassigned group devices\r\n    | where MachineGroup == \"UnassignedGroup\" or {flag_unassigned_group} == false\r\n    // Exlude certain device categories\r\n    | where DeviceCategory in ({include_device_category})\r\n    // Expand IP Addresses and networks\r\n    | mv-expand IPAddresses\r\n    | extend IPAddress = tostring(IPAddresses.IPAddress), SubnetPrefix = tostring(IPAddresses.SubnetPrefix), AddressType = tostring(IPAddresses.AddressType)\r\n    | mv-expand ConnectedNetworks\r\n    // Set empty network names to 'Unkown'\r\n    | extend ConnectedNetworkName = iff(ConnectedNetworks.Name == \"\", \"Unknown\",  tostring(ConnectedNetworks.Name))\r\n    // Only include filtered networks\r\n    | where ConnectedNetworkName in ({include_networks})\r\n    // Only include IP addresses found in network ranges from wathlist, or skip check when parameter is not set\r\n    | where ipv4_is_in_any_range(IPAddress, dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n    // Join networks\r\n    | extend joiner = 1\r\n    | join kind=inner networks on joiner\r\n    // Check if IP in netwoork address\r\n    | where ipv4_is_in_range(IPAddress, NetworkPrefix)\r\n    // Group TimeGenerated by DeviceId, IPAddress, and MACAddress\r\n    | summarize FirstSeen = min(TimeGenerated), LastSteen = max(TimeGenerated) by DeviceName, ConnectedNetworkName, DeviceCategory, IPAddress, Gateway, NetworkPrefix, Segment, SegmentType, VlanID, Location, MacAddress, Name,  MachineGroup, Vendor, OSBuild, OSPlatform, OSVersion, OSVersionInfo, DeviceSubtype, Model, OnboardingStatus, IsExcluded, AddressType, DeviceId\r\n    | distinct Name, DeviceId\r\n    | summarize count() by Name, DeviceId\r\n",
+                "size": 0,
+                "title": "Unmanaged devices by network",
+                "queryType": 0,
+                "resourceType": "microsoft.operationalinsights/workspaces",
+                "visualization": "piechart"
+              },
+              "customWidth": "50",
+              "name": "query - 7",
+              "styleSettings": {
+                "maxWidth": "50"
+              }
+            },
+            {
+              "type": 3,
+              "content": {
+                "version": "KqlItem/1.0",
+                "query": "// Get all networks from watchlist\r\nlet networks = _GetWatchlist(\"networks\")\r\n    | extend NetworkPrefix = strcat(NetworkAddress, \"/\", Prefix)\r\n    | where NetworkPrefix in (dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n    | extend joiner = 1;\r\nlet historic_devices = DeviceInfo\r\n    | where TimeGenerated between (ago(30d) .. {time_range:start})\r\n    | where OnboardingStatus == \"Onboarded\"\r\n    | distinct DeviceId;\r\nDeviceInfo\r\n| where TimeGenerated > {time_range:start}\r\n| join kind=leftanti historic_devices on DeviceId\r\n// Get more network info of the device\r\n| join DeviceNetworkInfo on DeviceId, ReportId\r\n// Remove unneeded data\r\n| project-away DeviceId1, Timestamp1, ReportId1, DeviceName1\r\n// Rmeove expected managed devices connecting after a long period\r\n| where JoinType in ({include_join_type}) or JoinType == \"\"\r\n| where OnboardingStatus != \"Onboarded\"\r\n// Exlude known vendor devices on the network\r\n| extend Vendor = iff(Vendor == \"\", \"Unknown\", Vendor)\r\n| where Vendor in ({include_known_vendors})\r\n// Remove excluded devices\r\n| where IsExcluded != 1 or {exclude_excluded_devices} == False\r\n// Only flag unassigned group devices\r\n| where MachineGroup == \"UnassignedGroup\" or {flag_unassigned_group} == false\r\n// Exlude certain device categories\r\n| where DeviceCategory in ({include_device_category})\r\n// Expand IP Addresses and networks\r\n| mv-expand IPAddresses\r\n| extend IPAddress = tostring(IPAddresses.IPAddress), SubnetPrefix = tostring(IPAddresses.SubnetPrefix), AddressType = tostring(IPAddresses.AddressType)\r\n| mv-expand ConnectedNetworks\r\n// Set empty network names to 'Unkown'\r\n| extend ConnectedNetworkName = iff(ConnectedNetworks.Name == \"\", \"Unknown\",  tostring(ConnectedNetworks.Name))\r\n// Only include filtered networks\r\n| where ConnectedNetworkName in ({include_networks})\r\n// Only include IP addresses found in network ranges from wathlist, or skip check when parameter is not set\r\n| where ipv4_is_in_any_range(tostring(IPAddress), dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n// Join networks\r\n| extend joiner = 1\r\n| join kind=inner networks on joiner\r\n// Check if IP in netwoork address\r\n| where ipv4_is_in_range(IPAddress, NetworkPrefix)\r\n// Group TimeGenerated by DeviceId, IPAddress, and MACAddress\r\n| summarize FirstSeen = min(TimeGenerated), LastSteen = max(TimeGenerated) by DeviceName, ConnectedNetworkName, DeviceCategory, IPAddress, Gateway, NetworkPrefix, Segment, SegmentType, VlanID, Location, MacAddress, Name,  MachineGroup, Vendor, OSBuild, OSPlatform, OSVersion, OSVersionInfo, DeviceSubtype, Model, OnboardingStatus, IsExcluded, AddressType, DeviceId\r\n| distinct DeviceId, Vendor\r\n| summarize count() by Vendor",
+                "size": 1,
+                "title": "Found unmanaged devices by vendor",
+                "queryType": 0,
+                "resourceType": "microsoft.operationalinsights/workspaces",
+                "visualization": "tiles",
+                "tileSettings": {
+                  "titleContent": {
+                    "columnMatch": "Vendor",
+                    "formatter": 1
+                  },
+                  "leftContent": {
+                    "columnMatch": "count_",
+                    "formatter": 12,
+                    "formatOptions": {
+                      "palette": "auto"
+                    },
+                    "numberFormat": {
+                      "unit": 17,
+                      "options": {
+                        "style": "decimal",
+                        "maximumFractionDigits": 2,
+                        "maximumSignificantDigits": 3
+                      }
+                    }
+                  },
+                  "showBorder": true,
+                  "sortCriteriaField": "count_",
+                  "sortOrderField": 2,
+                  "size": "auto"
+                },
+                "mapSettings": {
+                  "locInfo": "LatLong",
+                  "sizeSettings": "count_",
+                  "sizeAggregation": "Sum",
+                  "legendMetric": "count_",
+                  "legendAggregation": "Sum",
+                  "itemColorSettings": {
+                    "type": "heatmap",
+                    "colorAggregation": "Sum",
+                    "nodeColorField": "count_",
+                    "heatmapPalette": "greenRed"
+                  }
+                }
+              },
+              "customWidth": "33",
+              "name": "query - 6"
+            },
+            {
+              "type": 3,
+              "content": {
+                "version": "KqlItem/1.0",
+                "query": "// Get all networks from watchlist\r\nlet networks = _GetWatchlist(\"networks\")\r\n    | extend NetworkPrefix = strcat(NetworkAddress, \"/\", Prefix)\r\n    | where NetworkPrefix in (dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n    | extend joiner = 1;\r\nlet historic_devices = DeviceInfo\r\n    | where TimeGenerated between (ago(30d) .. {time_range:start})\r\n    | where OnboardingStatus == \"Onboarded\"\r\n    | distinct DeviceId;\r\nDeviceInfo\r\n| where TimeGenerated > {time_range:start}\r\n| join kind=leftanti historic_devices on DeviceId\r\n// Get more network info of the device\r\n| join DeviceNetworkInfo on DeviceId, ReportId\r\n// Remove unneeded data\r\n| project-away DeviceId1, Timestamp1, ReportId1, DeviceName1\r\n// Rmeove expected managed devices connecting after a long period\r\n| where JoinType in ({include_join_type}) or JoinType == \"\"\r\n| where OnboardingStatus != \"Onboarded\"\r\n// Exlude known vendor devices on the network\r\n| extend Vendor = iff(Vendor == \"\", \"Unknown\", Vendor)\r\n| where Vendor in ({include_known_vendors})\r\n// Remove excluded devices\r\n| where IsExcluded != 1 or {exclude_excluded_devices} == False\r\n// Only flag unassigned group devices\r\n| where MachineGroup == \"UnassignedGroup\" or {flag_unassigned_group} == false\r\n// Exlude certain device categories\r\n| where DeviceCategory in ({include_device_category})\r\n// Expand IP Addresses and networks\r\n| mv-expand IPAddresses\r\n| extend IPAddress = tostring(IPAddresses.IPAddress), SubnetPrefix = tostring(IPAddresses.SubnetPrefix), AddressType = tostring(IPAddresses.AddressType)\r\n| mv-expand ConnectedNetworks\r\n// Set empty network names to 'Unkown'\r\n| extend ConnectedNetworkName = iff(ConnectedNetworks.Name == \"\", \"Unknown\",  tostring(ConnectedNetworks.Name))\r\n// Only include filtered networks\r\n| where ConnectedNetworkName in ({include_networks})\r\n// Only include IP addresses found in network ranges from wathlist, or skip check when parameter is not set\r\n| where ipv4_is_in_any_range(tostring(IPAddress), dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n// Join networks\r\n| extend joiner = 1\r\n| join kind=inner networks on joiner\r\n// Check if IP in netwoork address\r\n| where ipv4_is_in_range(IPAddress, NetworkPrefix)\r\n// Group TimeGenerated by DeviceId, IPAddress, and MACAddress\r\n| summarize FirstSeen = min(TimeGenerated), LastSteen = max(TimeGenerated) by DeviceName, ConnectedNetworkName, DeviceCategory, IPAddress, Gateway, NetworkPrefix, Segment, SegmentType, VlanID, Location, MacAddress, Name,  MachineGroup, Vendor, OSBuild, OSPlatform, OSVersion, OSVersionInfo, DeviceSubtype, Model, OnboardingStatus, IsExcluded, AddressType, DeviceId\r\n// Make output better\r\n| distinct DeviceId, ConnectedNetworkName\r\n| summarize count() by ConnectedNetworkName",
+                "size": 1,
+                "title": "Found unmanaged devices by connected network",
+                "queryType": 0,
+                "resourceType": "microsoft.operationalinsights/workspaces",
+                "visualization": "tiles",
+                "tileSettings": {
+                  "titleContent": {
+                    "columnMatch": "ConnectedNetworkName",
+                    "formatter": 1
+                  },
+                  "leftContent": {
+                    "columnMatch": "count_",
+                    "formatter": 12,
+                    "formatOptions": {
+                      "palette": "auto"
+                    },
+                    "numberFormat": {
+                      "unit": 17,
+                      "options": {
+                        "maximumSignificantDigits": 3,
+                        "maximumFractionDigits": 2
+                      }
+                    }
+                  },
+                  "showBorder": true,
+                  "sortCriteriaField": "count_",
+                  "sortOrderField": 2,
+                  "size": "auto"
+                }
+              },
+              "customWidth": "33",
+              "name": "query - 7"
+            },
+            {
+              "type": 3,
+              "content": {
+                "version": "KqlItem/1.0",
+                "query": "// Get all networks from watchlist\r\nlet networks = _GetWatchlist(\"networks\")\r\n    | extend NetworkPrefix = strcat(NetworkAddress, \"/\", Prefix)\r\n    | where NetworkPrefix in (dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n    | extend joiner = 1;\r\nlet historic_devices = DeviceInfo\r\n    | where TimeGenerated between (ago(30d) .. {time_range:start})\r\n    | where OnboardingStatus == \"Onboarded\"\r\n    | distinct DeviceId;\r\nDeviceInfo\r\n| where TimeGenerated > {time_range:start}\r\n| join kind=leftanti historic_devices on DeviceId\r\n// Get more network info of the device\r\n| join DeviceNetworkInfo on DeviceId, ReportId\r\n// Remove unneeded data\r\n| project-away DeviceId1, Timestamp1, ReportId1, DeviceName1\r\n// Rmeove expected managed devices connecting after a long period\r\n| where JoinType in ({include_join_type}) or JoinType == \"\"\r\n| where OnboardingStatus != \"Onboarded\"\r\n// Exlude known vendor devices on the network\r\n| extend Vendor = iff(Vendor == \"\", \"Unknown\", Vendor)\r\n| where Vendor in ({include_known_vendors})\r\n// Remove excluded devices\r\n| where IsExcluded != 1 or {exclude_excluded_devices} == False\r\n// Only flag unassigned group devices\r\n| where MachineGroup == \"UnassignedGroup\" or {flag_unassigned_group} == false\r\n// Exlude certain device categories\r\n| where DeviceCategory in ({include_device_category})\r\n// Expand IP Addresses and networks\r\n| mv-expand IPAddresses\r\n| extend IPAddress = tostring(IPAddresses.IPAddress), SubnetPrefix = tostring(IPAddresses.SubnetPrefix), AddressType = tostring(IPAddresses.AddressType)\r\n| mv-expand ConnectedNetworks\r\n// Set empty network names to 'Unkown'\r\n| extend ConnectedNetworkName = iff(ConnectedNetworks.Name == \"\", \"Unknown\",  tostring(ConnectedNetworks.Name))\r\n// Only include filtered networks\r\n| where ConnectedNetworkName in ({include_networks})\r\n// Only include IP addresses found in network ranges from wathlist, or skip check when parameter is not set\r\n| where ipv4_is_in_any_range(tostring(IPAddress), dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\r\n// Make output better\r\n| distinct DeviceId, DeviceCategory\r\n| summarize count() by DeviceCategory\r\n| render piechart",
+                "size": 1,
+                "title": "Found unmanaged devices by device category",
+                "queryType": 0,
+                "resourceType": "microsoft.operationalinsights/workspaces",
+                "visualization": "tiles",
+                "tileSettings": {
+                  "titleContent": {
+                    "columnMatch": "DeviceCategory",
+                    "formatter": 1
+                  },
+                  "leftContent": {
+                    "columnMatch": "count_",
+                    "formatter": 12,
+                    "formatOptions": {
+                      "palette": "auto"
+                    },
+                    "numberFormat": {
+                      "unit": 17,
+                      "options": {
+                        "maximumSignificantDigits": 3,
+                        "maximumFractionDigits": 2
+                      }
+                    }
+                  },
+                  "showBorder": true,
+                  "sortCriteriaField": "count_",
+                  "sortOrderField": 2,
+                  "size": "auto"
+                }
+              },
+              "customWidth": "33",
+              "name": "query - 8"
+            },
+            {
+              "type": 3,
+              "content": {
+                "version": "KqlItem/1.0",
+                "query": "// Get all networks from watchlist\nlet networks = _GetWatchlist(\"networks\")\n    | extend NetworkPrefix = strcat(NetworkAddress, \"/\", Prefix)\n    | where NetworkPrefix in (dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\n    | extend joiner = 1;\nlet historic_devices = DeviceInfo\n    | where TimeGenerated between (ago(30d) .. {time_range:start})\n    | where OnboardingStatus == \"Onboarded\"\n    | distinct DeviceId;\nDeviceInfo\n    | where TimeGenerated > {time_range:start}\n    | join kind=leftanti historic_devices on DeviceId\n    // Get more network info of the device\n    | join DeviceNetworkInfo on DeviceId, ReportId\n    // Remove unneeded data\n    | project-away DeviceId1, Timestamp1, ReportId1, DeviceName1\n    // Rmeove expected managed devices connecting after a long period\n    | where JoinType in ({include_join_type}) or JoinType == \"\"\n    | where OnboardingStatus != \"Onboarded\"\n    // Exlude known vendor devices on the network\n    | extend Vendor = iff(Vendor == \"\", \"Unknown\", Vendor)\n    | where Vendor in ({include_known_vendors})\n    // Remove excluded devices\n    | where IsExcluded != 1 or {exclude_excluded_devices} == False\n    // Only flag unassigned group devices\n    | where MachineGroup == \"UnassignedGroup\" or {flag_unassigned_group} == false\n    // Exlude certain device categories\n    | where DeviceCategory in ({include_device_category})\n    // Expand IP Addresses and networks\n    | mv-expand IPAddresses\n    | extend IPAddress = tostring(IPAddresses.IPAddress), SubnetPrefix = tostring(IPAddresses.SubnetPrefix), AddressType = tostring(IPAddresses.AddressType)\n    | mv-expand ConnectedNetworks\n    // Set empty network names to 'Unkown'\n    | extend ConnectedNetworkName = iff(ConnectedNetworks.Name == \"\", \"Unknown\",  tostring(ConnectedNetworks.Name))\n    // Only include filtered networks\n    | where ConnectedNetworkName in ({include_networks})\n    // Only include IP addresses found in network ranges from wathlist, or skip check when parameter is not set\n    | where ipv4_is_in_any_range(IPAddress, dynamic([{network_address}])) or array_length(dynamic([{network_address}])) == 0\n    // Join networks\n    | extend joiner = 1\n    | join kind=inner networks on joiner\n    // Check if IP in netwoork address\n    | where ipv4_is_in_range(IPAddress, NetworkPrefix)\n    // Group TimeGenerated by DeviceId, IPAddress, and MACAddress\n    | summarize FirstSeen = min(TimeGenerated), LastSteen = max(TimeGenerated) by DeviceName, ConnectedNetworkName, DeviceCategory, IPAddress, Gateway, NetworkPrefix, Segment, SegmentType, VlanID, Location, MacAddress, Name,  MachineGroup, Vendor, OSBuild, OSPlatform, OSVersion, OSVersionInfo, DeviceSubtype, Model, OnboardingStatus, IsExcluded, AddressType, DeviceId\n    | extend DeviceUrl = strcat(\"https://security.microsoft.com/machines/\", DeviceId, \"?tid=\", '{hidden_tenant_lookup:value}')\n    | extend IPUrl = strcat(\"https://security.microsoft.com/ip/\", IPAddress, \"/overview?tid=\", '{hidden_tenant_lookup:value}')\n    | sort by FirstSeen desc\n",
+                "size": 3,
+                "title": "Unmanaged devices",
+                "showExportToExcel": true,
+                "queryType": 0,
+                "resourceType": "microsoft.operationalinsights/workspaces",
+                "gridSettings": {
+                  "formatters": [
+                    {
+                      "columnMatch": "DeviceName",
+                      "formatter": 1,
+                      "formatOptions": {
+                        "linkColumn": "DeviceUrl",
+                        "linkTarget": "Url"
+                      }
+                    },
+                    {
+                      "columnMatch": "IPAddress",
+                      "formatter": 1,
+                      "formatOptions": {
+                        "linkColumn": "IPUrl",
+                        "linkTarget": "Url"
+                      }
+                    },
+                    {
+                      "columnMatch": "DeviceId",
+                      "formatter": 1,
+                      "formatOptions": {
+                        "linkColumn": "DeviceUrl",
+                        "linkTarget": "Url"
+                      }
+                    },
+                    {
+                      "columnMatch": "DeviceUrl",
+                      "formatter": 5,
+                      "formatOptions": {
+                        "linkColumn": "DeviceName",
+                        "linkTarget": "Url",
+                        "linkLabel": "",
+                        "linkIsContextBlade": false
+                      }
+                    },
+                    {
+                      "columnMatch": "IPUrl",
+                      "formatter": 5
+                    }
+                  ],
+                  "rowLimit": 500,
+                  "filter": true
+                },
+                "graphSettings": {
+                  "type": 0,
+                  "topContent": {
+                    "columnMatch": "DeviceName",
+                    "formatter": 1
+                  },
+                  "centerContent": {
+                    "columnMatch": "OSBuild",
+                    "formatter": 1,
+                    "numberFormat": {
+                      "unit": 17,
+                      "options": {
+                        "maximumSignificantDigits": 3,
+                        "maximumFractionDigits": 2
+                      }
+                    }
+                  }
+                }
+              },
+              "name": "query - 2"
+            }
+          ]
+        },
+        "conditionalVisibility": {
+          "parameterName": "view",
+          "comparison": "isEqualTo",
+          "value": "overview"
+        },
+        "name": "group-overview"
+      }
+    ],
+    "fallbackResourceIds": [
+      "/subscriptions/80054df3-1613-4b41-8ed1-e380464fde2f/resourcegroups/rg-sec-p-soc-sentinel/providers/microsoft.operationalinsights/workspaces/log-sec-p-sentinel"
+    ],
+    "fromTemplateId": "sentinel-UserWorkbook",
+    "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+  }
