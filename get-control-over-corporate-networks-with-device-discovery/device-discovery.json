@@ -248,7 +248,6 @@
                     "queryType": 0,
                     "resourceType": "microsoft.operationalinsights/workspaces",
                     "value": [
-                      "172.17.10.0/24"
                     ]
                   },
                   {
