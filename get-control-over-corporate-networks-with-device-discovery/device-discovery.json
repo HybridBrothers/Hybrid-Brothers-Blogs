@@ -552,7 +552,6 @@
       }
     ],
     "fallbackResourceIds": [
-      "/subscriptions/80054df3-1613-4b41-8ed1-e380464fde2f/resourcegroups/rg-sec-p-soc-sentinel/providers/microsoft.operationalinsights/workspaces/log-sec-p-sentinel"
     ],
     "fromTemplateId": "sentinel-UserWorkbook",
     "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
