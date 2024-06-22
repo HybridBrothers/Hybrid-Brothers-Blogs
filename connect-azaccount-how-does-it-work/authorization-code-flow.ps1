@@ -171,7 +171,6 @@ function AuthorizationCodeRetrieval {
 function AccessTokenRetrieval {
   param (
     [Parameter(Mandatory = $true)][String]$clientId,
-    [Parameter(Mandatory = $true)][String]$scope,
     [Parameter(Mandatory = $true)][String]$tenantId,
     [Parameter(Mandatory = $true)][String]$redirectUri,
     [Parameter(Mandatory = $true)][String]$authCode,
@@ -186,7 +185,6 @@ function AccessTokenRetrieval {
     client_id     = $clientId
     redirect_uri  = $redirectUri
     code          = $authCode
-    scope         = $scope
     code_verifier = $code_verifier
   }
 
@@ -215,7 +213,6 @@ function powershellLogin {
   $redirectUri = 'http://localhost:8400'
   $commonParams = @{
     clientId    = $clientId
-    scope       = $scope
     tenantId    = $tenantId
     redirectUri = $redirectUri
   }
@@ -223,6 +220,7 @@ function powershellLogin {
   ### Call authorization code function ###
   $AuthorizationCodeFlowParams = $commonParams.Clone()
   $AuthorizationCodeFlowParams.Add("logoutAfterAuth", $logoutAfterAuth)
+  $AuthorizationCodeFlowParams.Add("scope", $scope)
   $authParams = AuthorizationCodeRetrieval @AuthorizationCodeFlowParams
 
   ### Call access token function ###
