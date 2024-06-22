@@ -1,5 +1,3 @@
-Add-Type -AssemblyName System.Web, System.Security
-
 function AuthorizationCodeRetrieval {
   param (
     [Parameter(Mandatory = $true)][String]$clientId,
@@ -89,7 +87,7 @@ function AuthorizationCodeRetrieval {
     </head>
     <body>
       <div class="card">
-        <h3>You are now logged in as a customer</h3>
+        <h3>You are now logged in!</h3>
         $htmlText
         <i class="material-icons">done</i>
       </div>
@@ -237,4 +235,4 @@ function powershellLogin {
   return $accessToken
 }
 
-powershellLogin -tenantId "{tenantId}"
+powershellLogin
