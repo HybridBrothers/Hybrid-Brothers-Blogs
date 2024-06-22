@@ -1,3 +1,7 @@
+######################################################
+### Made by Cédric Braekevelt (hybridbrothers.com) ###
+######################################################
+
 function AuthorizationCodeRetrieval {
   param (
     [Parameter(Mandatory = $true)][String]$clientId,
