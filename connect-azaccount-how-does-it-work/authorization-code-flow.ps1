@@ -201,7 +201,7 @@ function AccessTokenRetrieval {
   }
 }
 
-function powershellLogin {
+function PowershellInteractiveLogin {
   param (
     [Parameter(Mandatory = $false)][String]$clientId = '14d82eec-204b-4c2f-b7e8-296a70dab67e',
     [Parameter(Mandatory = $false)][String]$scope = 'openid profile email offline_access',
@@ -233,4 +233,4 @@ function powershellLogin {
   return $accessToken
 }
 
-powershellLogin
+PowershellInteractiveLogin
