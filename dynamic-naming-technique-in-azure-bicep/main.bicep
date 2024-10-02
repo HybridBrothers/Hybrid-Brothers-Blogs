@@ -27,7 +27,7 @@ param sharedNaming naming = {
 // Located in the main.bicep / main.bicepparam on the customer size
 // ------------------------------------------------------------------------------------------------------
 module resourceGroupDeployment 'resource-group/main.bicep' = {
-  name: 'qsd'
+  name: 'resourceGroupDeployment'
   params: {
     resourceObject: {
       location: deployment().location
