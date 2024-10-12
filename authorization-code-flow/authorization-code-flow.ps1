@@ -1,3 +1,4 @@
+
 ######################################################
 ### Made by Cédric Braekevelt (hybridbrothers.com) ###
 ######################################################
@@ -193,22 +194,24 @@ function AccessTokenRetrieval {
   }
 
   ### Call token endpoint to exchange authorization token for access token ###
-  $response = Invoke-RestMethod -Method Post -Uri $tokenUrl -Body $body
-  if ($response.access_token) {
+  $response = Invoke-WebRequest -Method Post -Uri $tokenUrl -Body $body
+  if ($response.StatusCode -eq "200") {
+    $content = ($response.Content | ConvertFrom-Json)
     return @{
-      access_token  = $response.access_token
-      refresh_token = $response.refresh_token
+      access_token  = $content.access_token
+      refresh_token = $content.refresh_token
+      id_token      = $content.id_token
     }
   }
   else {
-    Write-Warning "Token retrieval failed: $($response.status_code) $($response.error_description)"
+    Write-Warning "Access Code retrieval failed: $($response.StatusCode)"
   }
 }
 
-function PowershellInteractiveLogin {
+function PowershellAuthorizationCodeLogin {
   param (
-    [Parameter(Mandatory = $false)][String]$clientId = '14d82eec-204b-4c2f-b7e8-296a70dab67e',
-    [Parameter(Mandatory = $false)][String]$scope = 'openid profile email offline_access',
+    [Parameter(Mandatory = $false)][String]$clientId = '1950a258-227b-4e31-a9cf-717495945fc2',
+    [Parameter(Mandatory = $false)][String]$scope = 'https://management.azure.com/.default openid profile email offline_access',
     [Parameter(Mandatory = $false)][String]$tenantId = 'common',
     [Parameter(Mandatory = $false)][Bool]$logoutAfterAuth = $false
   )
@@ -237,4 +240,22 @@ function PowershellInteractiveLogin {
   return $accessToken
 }
 
-PowershellInteractiveLogin
+function Get-Resources {
+  param (
+      [Parameter(Mandatory = $true)][String]$subscriptionId,
+      [Parameter(Mandatory = $true)][String]$resourceGroupName,
+      [Parameter(Mandatory = $true)][String]$token
+  )
+  $resourceURL = "https://management.azure.com/subscriptions/$($subscriptionId)/resourceGroups/$($resourceGroupName)/resources?api-version=2021-04-01"
+  $headers = @{
+      Authorization = "Bearer $($token)"
+  }
+  return (((Invoke-WebRequest -Method Get -Headers $headers -Uri $resourceURL).Content | ConvertFrom-Json).value)
+}
+
+
+### Call authentication function ###
+$tokens = PowershellAuthorizationCodeLogin
+
+### Test retrieval of ARC resource ###
+Get-Resources -token $tokens.access_token -subscriptionId "fd3abac2-1ba3-4419-8554-8a3d6deaf1ad" -resourceGroupName "rg-arc-dev-westeurope"
