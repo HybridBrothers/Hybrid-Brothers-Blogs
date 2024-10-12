@@ -240,22 +240,5 @@ function PowershellAuthorizationCodeLogin {
   return $accessToken
 }
 
-function Get-Resources {
-  param (
-      [Parameter(Mandatory = $true)][String]$subscriptionId,
-      [Parameter(Mandatory = $true)][String]$resourceGroupName,
-      [Parameter(Mandatory = $true)][String]$token
-  )
-  $resourceURL = "https://management.azure.com/subscriptions/$($subscriptionId)/resourceGroups/$($resourceGroupName)/resources?api-version=2021-04-01"
-  $headers = @{
-      Authorization = "Bearer $($token)"
-  }
-  return (((Invoke-WebRequest -Method Get -Headers $headers -Uri $resourceURL).Content | ConvertFrom-Json).value)
-}
-
-
 ### Call authentication function ###
 $tokens = PowershellAuthorizationCodeLogin
-
-### Test retrieval of ARC resource ###
-Get-Resources -token $tokens.access_token -subscriptionId "fd3abac2-1ba3-4419-8554-8a3d6deaf1ad" -resourceGroupName "rg-arc-dev-westeurope"
