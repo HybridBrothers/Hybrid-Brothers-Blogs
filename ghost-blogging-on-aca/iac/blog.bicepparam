@@ -1,3 +1,4 @@
+
 using 'main.bicep'
 
 param application = 'blog'

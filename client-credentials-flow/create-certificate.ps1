@@ -1,6 +1,6 @@
 
 ######################################################
-### Made by Cédric Braekevelt (hybridbrothers.com) ###
+### Made by Cedric Braekevelt (hybridbrothers.com) ###
 ######################################################
 
 ### Create self-signed certificate and store in user certificate store ###

@@ -1,6 +1,6 @@
 
 ######################################################
-### Made by Cédric Braekevelt (hybridbrothers.com) ###
+### Made by Cedric Braekevelt (hybridbrothers.com) ###
 ######################################################
 
 function PowershellClientCredentialsLogin {

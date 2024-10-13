@@ -1,3 +1,8 @@
+
+######################################################
+### Made by Cedric Braekevelt (hybridbrothers.com) ###
+######################################################
+
 # Define the folder path
 $folderPath = "C:\Scripting\HB-Hybrid-Brothers-Site\Backups\MySQL-2023-10-06"
 

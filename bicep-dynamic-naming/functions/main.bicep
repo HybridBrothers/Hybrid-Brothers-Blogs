@@ -1,6 +1,6 @@
 
 /* ###################################################### */
-/* ### Made by Cédric Braekevelt (hybridbrothers.com) ### */
+/* ### Made by Cedric Braekevelt (hybridbrothers.com) ### */
 /* ###################################################### */
 
 import { naming } from '../types/main.bicep'
